@@ -50,7 +50,25 @@
     .table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px}
     .table th{color:var(--muted);text-align:left;background:rgba(255,255,255,.03)}
     .table tr:last-child td{border-bottom:none}
-    .pillType{padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(202,168,90,.16);border:1px solid rgba(202,168,90,.35);color:var(--gold2)}
+    /* 让“类型”徽标稳定对齐 */
+.pillType{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:28px;
+  line-height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  font-size:12px;
+  white-space:nowrap;
+  background:rgba(202,168,90,.16);
+  border:1px solid rgba(202,168,90,.35);
+  color:var(--gold2);
+}
+    .table td, .table th{
+  vertical-align:middle;
+}
+
     .item{padding:10px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.22);margin-bottom:10px}
     .item .t{font-weight:700} .item .m{font-size:12px;color:var(--muted);margin-top:6px}
     .link{color:var(--gold2);text-decoration:underline;cursor:pointer}
@@ -434,3 +452,4 @@
 </script>
 </body>
 </html>
+
