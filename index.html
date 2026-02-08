@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>金鹰商户端智能体｜可点击原型（Web后台）</title>
+  <style>
+    :root{
+      --bg:#0b0c10; --text:#f2f4f8; --muted:#a7b0c0; --line:rgba(255,255,255,.10);
+      --gold:#caa85a; --gold2:#e3c77b; --warn:#ffd26a; --ok:#5cffb8; --danger:#ff5c72;
+      --shadow:0 10px 30px rgba(0,0,0,.35); --r:16px; --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;font-family:var(--font);color:var(--text);
+      background:radial-gradient(1200px 700px at 15% 10%, rgba(202,168,90,.14), transparent 60%),
+                 radial-gradient(900px 600px at 90% 20%, rgba(94,255,184,.06), transparent 60%), var(--bg);}
+    a{color:inherit;text-decoration:none}
+    .app{display:grid;grid-template-columns:280px 1fr;height:100vh}
+    .sidebar{padding:16px;border-right:1px solid var(--line);background:rgba(0,0,0,.18)}
+    .logo{padding:12px;border-radius:18px;border:1px solid rgba(202,168,90,.35);background:rgba(202,168,90,.08)}
+    .brand{display:flex;justify-content:space-between;align-items:center}
+    .pill{padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(202,168,90,.16);border:1px solid rgba(202,168,90,.35);color:var(--gold2)}
+    .small{font-size:12px;color:var(--muted)}
+    .nav{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+    .nav a{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:14px;color:var(--muted)}
+    .nav a:hover{background:rgba(255,255,255,.04);color:var(--text)}
+    .nav a.active{background:rgba(202,168,90,.10);border:1px solid rgba(202,168,90,.35);color:var(--gold2)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:12px;color:var(--muted)}
+    .badge b{color:var(--text)}
+    .main{padding:18px;overflow:auto}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .h1{font-size:22px;font-weight:750}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);cursor:pointer}
+    .btn:hover{background:rgba(255,255,255,.08)}
+    .btn.primary{background:linear-gradient(180deg, rgba(202,168,90,.25), rgba(202,168,90,.10));border:1px solid rgba(202,168,90,.45)}
+    .filters{display:flex;gap:10px;flex-wrap:wrap}
+    .input,select,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);outline:none}
+    textarea{min-height:110px}
+    .card{border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));}
+    .pad{padding:16px}
+    .sep{height:1px;background:var(--line);margin:10px 0}
+    .page{display:none} .page.show{display:block}
+    .two{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
+    .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .kpi{padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.2)}
+    .kpi .v{font-size:20px;font-weight:850}
+    .kpi .t{font-size:12px;color:var(--muted)}
+    .table{width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;border:1px solid var(--line);overflow:hidden}
+    .table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px}
+    .table th{color:var(--muted);text-align:left;background:rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:none}
+    .pillType{padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(202,168,90,.16);border:1px solid rgba(202,168,90,.35);color:var(--gold2)}
+    .item{padding:10px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.22);margin-bottom:10px}
+    .item .t{font-weight:700} .item .m{font-size:12px;color:var(--muted);margin-top:6px}
+    .link{color:var(--gold2);text-decoration:underline;cursor:pointer}
+    .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .kan-col{padding:12px}
+    .colh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .toast{position:fixed;right:16px;bottom:16px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(17,19,26,.92);box-shadow:var(--shadow);display:none}
+    .toast.show{display:block}
+    .modalBg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:18px}
+    .modalBg.show{display:flex}
+    .modal{width:min(920px,96vw);border-radius:20px;border:1px solid var(--line);background:rgba(14,16,22,.98);box-shadow:var(--shadow);overflow:hidden}
+    .modal header{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+    .modal .content{padding:16px}
+    @media (max-width:980px){.app{grid-template-columns:1fr}.sidebar{display:none}.two{grid-template-columns:1fr}.kanban{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="brand">
+        <b>金鹰｜商户智能体</b>
+        <span class="pill">Prototype</span>
+      </div>
+      <div class="small" style="margin-top:6px">“异常→动作→审批→协同→复盘”闭环</div>
+    </div>
+
+    <div class="nav" id="nav">
+      <a href="#alerts" data-page="alerts">异常提醒 <span class="badge"><b>6</b></span></a>
+      <a href="#draft" data-page="draft">活动草案编辑 <span class="badge"><b>草案</b></span></a>
+      <a href="#approval" data-page="approval">审批中心 <span class="badge"><b>3</b></span></a>
+      <a href="#tasks" data-page="tasks">协同任务看板 <span class="badge"><b>12</b></span></a>
+      <a href="#review" data-page="review">复盘页 <span class="badge"><b>ROI</b></span></a>
+    </div>
+
+    <div class="sep"></div>
+    <div class="small">门店轻量端（H5）：</div>
+    <div style="margin-top:8px">
+      <a class="btn primary" href="h5.html" target="_blank">打开H5原型</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="h1" id="title">异常提醒</div>
+        <span class="badge"><b>数据</b> T+1（MVP）</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn" id="btnEmpty">切换空状态</button>
+        <button class="btn primary" id="btnAgent">打开智能体面板</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <select class="input" style="max-width:220px"><option>门店：新街口店</option></select>
+      <select class="input" style="max-width:220px"><option>楼层：全部</option><option>F1</option><option>F2</option><option>F3</option></select>
+      <select class="input" style="max-width:220px"><option>时间：今天</option><option>昨天</option><option>近7天</option></select>
+      <input class="input" style="max-width:280px" placeholder="搜索：商户/活动/SKU…"/>
+    </div>
+
+    <!-- A1 异常提醒 -->
+    <section class="page" id="alerts">
+      <div class="two" style="margin-top:12px">
+        <div class="card pad">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <b>异常列表（可一键转任务/活动草案）</b>
+            <button class="btn primary" onclick="openAgent('alerts')">让智能体解释+给动作</button>
+          </div>
+          <div class="sep"></div>
+
+          <table class="table" id="alertsTable">
+            <thead><tr><th>类型</th><th>对象</th><th>影响</th><th>依据（可解释）</th><th style="text-align:right">动作</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="pillType">销售下滑</span></td>
+                <td>F3 · 运动潮流</td>
+                <td>预计少卖 ¥210,000</td>
+                <td style="color:var(--muted)">爆品缺货 + 活动到期未续</td>
+                <td style="text-align:right">
+                  <span class="link" onclick="jump('draft')">生成活动草案</span> ·
+                  <span class="link" onclick="jump('tasks')">生成协同任务</span>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="pillType">缺货风险</span></td>
+                <td>Nike · Air Max 90</td>
+                <td>预计断货 48h</td>
+                <td style="color:var(--muted)">近7日销量上升，库存低于安全线</td>
+                <td style="text-align:right"><span class="link" onclick="jump('tasks')">生成补货任务</span></td>
+              </tr>
+              <tr>
+                <td><span class="pillType">核销异常</span></td>
+                <td>游客礼遇券</td>
+                <td>核销率 2.1%</td>
+                <td style="color:var(--muted)">门店未确认参与 + 话术未覆盖</td>
+                <td style="text-align:right"><span class="link" onclick="jump('tasks')">催办协同任务</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card pad" id="alertsEmpty" style="display:none;margin-top:12px;background:rgba(0,0,0,.18)">
+            <b>暂无异常</b>
+            <div class="small" style="margin-top:6px">你可以让智能体做“机会扫描”（游客引流/清库存/提升核销）。</div>
+            <div style="margin-top:10px"><button class="btn primary" onclick="openAgent('alerts')">机会扫描</button></div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <b>智能体建议预览（3条）</b>
+          <div class="small" style="margin-top:6px">只输出“可执行动作”，关键动作需审批。</div>
+          <div class="sep"></div>
+          <div class="item"><div class="t">① 续期活动并缩小到已确认门店</div><div class="m">避免执行不一致导致核销低与客诉。</div></div>
+          <div class="item"><div class="t">② 生成补货任务（48小时内）</div><div class="m">按近7日销量与安全线计算断货风险。</div></div>
+          <div class="item"><div class="t">③ 下发收银规则说明+导购话术包</div><div class="m">统一口径，降低核销阻塞。</div></div>
+          <div style="display:flex;gap:10px">
+            <button class="btn primary" onclick="jump('tasks')">生成协同任务</button>
+            <button class="btn" onclick="jump('draft')">生成活动草案</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- A2 活动草案编辑 -->
+    <section class="page" id="draft">
+      <div class="two" style="margin-top:12px">
+        <div class="card pad">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <b>活动草案编辑（智能体生成，可人工确认）</b>
+            <div style="display:flex;gap:10px">
+              <button class="btn" onclick="toast('已保存草案 v0.2（演示）')">保存草案</button>
+              <button class="btn primary" onclick="toast('已提交审批（演示）');jump('approval')">提交审批</button>
+            </div>
+          </div>
+          <div class="sep"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div><div class="small">活动名称</div><input class="input" value="游客礼遇券（酒店合作）｜试点 v0.2"/></div>
+            <div><div class="small">目标</div><select class="input"><option>引流（外国游客/酒店住客）</option><option>转化</option></select></div>
+            <div><div class="small">范围</div><input class="input" value="F1-F3（已确认门店优先）"/></div>
+            <div><div class="small">时间</div><input class="input" value="2026-02-15 ～ 2026-03-01"/></div>
+            <div style="grid-column:1/-1"><div class="small">权益/规则</div>
+              <textarea class="input">满¥300减¥50（每人1次）；不可与清仓券叠加；核销异常处理SOP…</textarea>
+            </div>
+          </div>
+          <div class="sep"></div>
+          <b>商户池（含确认状态）</b>
+          <table class="table" style="margin-top:10px">
+            <thead><tr><th>商户</th><th>楼层</th><th>状态</th><th>备注</th></tr></thead>
+            <tbody>
+              <tr><td>Nike</td><td>F3</td><td style="color:var(--warn)">待确认</td><td style="color:var(--muted)">需确认备货</td></tr>
+              <tr><td>Adidas</td><td>F3</td><td style="color:var(--ok)">已确认</td><td style="color:var(--muted)">OK</td></tr>
+            </tbody>
+          </table>
+          <div class="sep"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <b>执行包（话术/FAQ/物料）</b>
+            <button class="btn primary" onclick="openPack()">预览执行包</button>
+          </div>
+          <div class="small" style="margin-top:6px">发布后同步到门店H5“素材下载”。</div>
+        </div>
+
+        <div class="card pad">
+          <b>发布方式（与ERP融合）</b>
+          <div class="small" style="margin-top:6px">MVP：读为主、写为辅。无接口时生成操作清单并留痕。</div>
+          <div class="sep"></div>
+          <div class="item"><div class="t">模式1：ERP有促销接口</div><div class="m">审批通过→调用接口发布→回写活动ID。</div></div>
+          <div class="item"><div class="t">模式2：ERP无接口（兜底）</div><div class="m">审批通过→发布执行包→生成ERP操作清单→人工回填编号。</div></div>
+          <div class="sep"></div>
+          <div style="display:flex;gap:10px">
+            <button class="btn" onclick="jump('tasks')">生成门店协同任务</button>
+            <button class="btn primary" onclick="jump('approval')">查看审批队列</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- A3 审批中心 -->
+    <section class="page" id="approval">
+      <div class="card pad" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <b>审批中心（可追溯、可回滚）</b>
+          <button class="btn primary" onclick="toast('已批量通过（演示）')">批量通过</button>
+        </div>
+        <div class="sep"></div>
+        <table class="table">
+          <thead><tr><th>类型</th><th>标题</th><th>发起人</th><th>风险</th><th>状态</th><th style="text-align:right">操作</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="pillType">活动发布</span></td>
+              <td>游客礼遇券｜试点 v0.2</td>
+              <td style="color:var(--muted)">楼层运营</td>
+              <td style="color:var(--muted)">权益成本、叠加规则</td>
+              <td style="color:var(--warn)">待审批</td>
+              <td style="text-align:right"><span class="link" onclick="toast('已通过（演示）')">通过</span> · <span class="link" onclick="toast('已驳回（演示）')">驳回</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sep"></div>
+        <div class="small">所有审批写入审计日志（谁/何时/改了什么/前后值）。</div>
+      </div>
+    </section>
+
+    <!-- A4 协同任务看板 -->
+    <section class="page" id="tasks">
+      <div class="two" style="margin-top:12px">
+        <div class="card pad">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <b>协同任务看板（发作业+催办+回填）</b>
+            <div style="display:flex;gap:10px">
+              <button class="btn" onclick="toast('已催办（演示）')">一键催办</button>
+              <a class="btn primary" href="h5.html" target="_blank">打开门店H5</a>
+            </div>
+          </div>
+          <div class="sep"></div>
+
+          <div class="kanban">
+            <div class="card kan-col">
+              <div class="colh"><b>待确认</b><span class="badge"><b>2</b></span></div>
+              <div class="item"><div class="t">T-001 门店确认参与｜游客礼遇券</div><div class="m">Nike · 截止：明天10:00</div></div>
+              <div class="item"><div class="t">T-002 门店确认参与｜游客礼遇券</div><div class="m">咖啡/甜品 · 截止：明天10:00</div></div>
+            </div>
+            <div class="card kan-col">
+              <div class="colh"><b>备货/陈列</b><span class="badge"><b>1</b></span></div>
+              <div class="item"><div class="t">T-003 补货确认｜Air Max 90</div><div class="m">Nike · 预计断货48h</div></div>
+            </div>
+            <div class="card kan-col">
+              <div class="colh"><b>话术/培训</b><span class="badge"><b>1</b></span></div>
+              <div class="item"><div class="t">T-007 收银规则确认｜券叠加说明</div><div class="m">多门店 · 客诉聚类</div></div>
+            </div>
+            <div class="card kan-col">
+              <div class="colh"><b>已回填</b><span class="badge"><b>1</b></span></div>
+              <div class="item"><div class="t">T-008 参与确认｜伴手礼集合店</div><div class="m">已确认 + 已下载素材</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <b>任务详情（示例）</b>
+          <div class="sep"></div>
+          <div class="small">门店需要做：确认参与 → 下载素材 → 回填反馈；逾期自动升级给楼层负责人。</div>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <button class="btn" onclick="jump('review')">查看复盘</button>
+            <button class="btn primary" onclick="toast('已生成催办话术（演示）')">智能体生成沟通话术</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- A5 复盘页 -->
+    <section class="page" id="review">
+      <div class="three" style="margin-top:12px">
+        <div class="kpi card pad"><div class="t">可归因增量成交</div><div class="v">¥680,000</div><div class="small">活动ID/核销/任务ID→订单</div></div>
+        <div class="kpi card pad"><div class="t">缺货损失减少</div><div class="v">¥95,000</div><div class="small">销量缺口估算</div></div>
+        <div class="kpi card pad"><div class="t">协同执行达成率</div><div class="v">82%</div><div class="small">确认/备货/话术/回填</div></div>
+      </div>
+
+      <div class="two" style="margin-top:12px">
+        <div class="card pad">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <b>复盘摘要（一页纸）</b>
+            <button class="btn primary" onclick="openAgent('review')">让智能体给下次优化</button>
+          </div>
+          <div class="sep"></div>
+          <div class="item"><div class="t">做对了什么</div><div class="m">先缩小到已确认门店，话术统一后核销明显改善。</div></div>
+          <div class="item"><div class="t">损失点</div><div class="m">Nike断货导致少卖；2家门店逾期确认。</div></div>
+          <div class="item"><div class="t">下次怎么改</div><div class="m">提前48小时触发备货确认；确认率<90%自动缩小范围并升级提醒。</div></div>
+        </div>
+
+        <div class="card pad">
+          <b>执行达成（SLA）</b>
+          <div class="sep"></div>
+          <table class="table">
+            <thead><tr><th>门店</th><th>确认</th><th>备货</th><th>话术</th><th>回填</th></tr></thead>
+            <tbody>
+              <tr><td>Nike</td><td style="color:var(--warn)">逾期</td><td style="color:var(--warn)">不足</td><td>未完成</td><td>已回填</td></tr>
+              <tr><td>Adidas</td><td style="color:var(--ok)">按期</td><td style="color:var(--ok)">完成</td><td>完成</td><td>已回填</td></tr>
+            </tbody>
+          </table>
+          <div class="sep"></div>
+          <button class="btn primary" onclick="jump('tasks')">回到协同看板</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 智能体弹层（演示可控性：解释+动作） -->
+<div class="modalBg" id="agentModal">
+  <div class="modal">
+    <header>
+      <b>智能体面板（演示）｜可解释 + 可执行 + 需审批</b>
+      <button class="btn" onclick="closeAgent()">关闭</button>
+    </header>
+    <div class="content">
+      <div class="small">输入一句话，智能体输出：依据（可解释）+ 动作（可执行）+ 风险（需审批）。</div>
+      <div class="sep"></div>
+      <textarea class="input" id="agentQ">今天哪些异常最影响销售？</textarea>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="btn primary" onclick="agentRun()">让智能体回答</button>
+        <button class="btn" onclick="jump('tasks');closeAgent()">去生成任务</button>
+        <button class="btn" onclick="jump('draft');closeAgent()">去生成草案</button>
+      </div>
+      <div class="sep"></div>
+      <div class="card pad" style="background:rgba(0,0,0,.22)" id="agentOut">
+        <div class="small">（这里显示智能体输出）</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 执行包弹层 -->
+<div class="modalBg" id="packModal">
+  <div class="modal">
+    <header>
+      <b>执行包预览（话术/FAQ/物料）</b>
+      <button class="btn" onclick="closePack()">关闭</button>
+    </header>
+    <div class="content">
+      <div class="item"><div class="t">导购话术（中英）</div><div class="m">开场/异议/引导路线（游客友好）</div></div>
+      <div class="item"><div class="t">收银规则说明</div><div class="m">叠加规则举例 + 核销异常SOP</div></div>
+      <div class="item"><div class="t">海报文案/二维码</div><div class="m">门口/收银台张贴（中英）</div></div>
+      <div class="sep"></div>
+      <a class="btn primary" href="h5.html#assets" target="_blank">去门店H5查看</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const titles={alerts:'异常提醒',draft:'活动草案编辑',approval:'审批中心',tasks:'协同任务看板',review:'复盘页'};
+  let empty=false;
+
+  function showPage(p){
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('show'));
+    const el=document.getElementById(p); if(el) el.classList.add('show');
+    document.getElementById('title').textContent=titles[p]||'页面';
+    document.querySelectorAll('#nav a').forEach(a=>a.classList.remove('active'));
+    const a=document.querySelector(`#nav a[data-page="${p}"]`); if(a) a.classList.add('active');
+  }
+  function jump(p){ location.hash=p; }
+  function toast(msg){
+    const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
+
+  function openAgent(ctx){
+    document.getElementById('agentModal').classList.add('show');
+    document.getElementById('agentQ').value = ctx==='review' ? '这次活动值不值？下次怎么改？' : '今天哪些异常最影响销售？';
+  }
+  function closeAgent(){ document.getElementById('agentModal').classList.remove('show'); }
+  function agentRun(){
+    const q=document.getElementById('agentQ').value||'';
+    let out='';
+    if(q.includes('异常')){
+      out=`<b>结论：</b>优先处理F3销售下滑与Nike断货。<br/><br/>
+      <b>依据（可解释）：</b>近7天销量/库存安全线/核销率异常。<br/><br/>
+      <b>建议动作（可执行）：</b>生成补货任务→生成活动草案→下发话术与收银规则（关键动作需审批）。`;
+    }else{
+      out=`<b>复盘结论：</b>可归因增量成交¥68万；执行达成82%。<br/><br/>
+      <b>损失点：</b>Nike断货+门店逾期确认。<br/><br/>
+      <b>下次优化：</b>提前48小时备货确认；确认率<90%自动缩小范围并升级提醒。`;
+    }
+    document.getElementById('agentOut').innerHTML=out;
+    toast('智能体输出已更新（演示）');
+  }
+
+  function openPack(){ document.getElementById('packModal').classList.add('show'); }
+  function closePack(){ document.getElementById('packModal').classList.remove('show'); }
+
+  document.getElementById('btnEmpty').addEventListener('click',()=>{
+    empty=!empty;
+    document.getElementById('alertsTable').style.display=empty?'none':'table';
+    document.getElementById('alertsEmpty').style.display=empty?'block':'none';
+    toast(empty?'已切换空状态':'已恢复列表');
+  });
+  document.getElementById('btnAgent').addEventListener('click',()=>openAgent(location.hash.replace('#','')||'alerts'));
+
+  function init(){ showPage((location.hash||'#alerts').replace('#','')); }
+  window.addEventListener('hashchange',init); init();
+</script>
+</body>
+</html>

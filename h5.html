@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>门店协同（H5）｜金鹰</title>
+  <style>
+    :root{
+      --bg:#0b0c10; --text:#f2f4f8; --muted:#a7b0c0; --line:rgba(255,255,255,.10);
+      --gold:#caa85a; --gold2:#e3c77b; --shadow:0 10px 30px rgba(0,0,0,.35); --r:18px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:var(--font);color:var(--text);
+      background:radial-gradient(900px 600px at 40% -10%, rgba(202,168,90,.16), transparent 55%), var(--bg);}
+    .wrap{max-width:430px;margin:0 auto;min-height:100vh;padding:14px}
+    .top{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-radius:18px;
+      border:1px solid rgba(202,168,90,.35);background:rgba(202,168,90,.08)}
+    .t{font-weight:850;font-size:14px}
+    .small{font-size:12px;color:var(--muted)}
+    .pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;border:1px solid rgba(202,168,90,.35);
+      background:rgba(202,168,90,.10);color:var(--gold2)}
+    .nav{display:flex;gap:8px;margin-top:12px}
+    .nav a{flex:1;text-align:center;padding:10px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.04);font-size:12px;color:var(--muted);text-decoration:none}
+    .nav a.active{border-color:rgba(202,168,90,.45);background:rgba(202,168,90,.12);color:var(--gold2)}
+    .card{border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);background:rgba(255,255,255,.05)}
+    .pad{padding:14px}
+    .item{padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.22)}
+    .item .h{font-weight:780} .item .m{font-size:12px;color:var(--muted);margin-top:6px}
+    .btn{display:inline-flex;justify-content:center;align-items:center;padding:11px 12px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.05);cursor:pointer;color:var(--text);text-decoration:none}
+    .btn.primary{background:rgba(202,168,90,.14);border-color:rgba(202,168,90,.45);color:var(--gold2)}
+    .grid{display:grid;gap:10px}
+    .input,select,textarea{width:100%;padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(0,0,0,.25);color:var(--text);outline:none}
+    textarea{min-height:96px}
+    .page{display:none}.page.show{display:block}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(17,19,26,.94);display:none}
+    .toast.show{display:block}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="t">门店协同（H5）</div>
+      <div class="small">只做协同：确认/素材/回填（不替代品牌系统）</div>
+    </div>
+    <span class="pill">Nike · F3</span>
+  </div>
+
+  <div class="nav">
+    <a href="#list" data-p="list">任务</a>
+    <a href="#confirm" data-p="confirm">确认</a>
+    <a href="#assets" data-p="assets">素材</a>
+    <a href="#feedback" data-p="feedback">回填</a>
+  </div>
+
+  <!-- 任务列表 -->
+  <section class="page" id="list" style="margin-top:12px">
+    <div class="card pad">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <b>任务列表</b><span class="pill">2 待处理</span>
+      </div>
+      <div class="small" style="margin-top:6px">点任务→跳到对应步骤。</div>
+      <div class="grid" style="margin-top:10px">
+        <div class="item">
+          <div class="h">T-001 确认参与｜游客礼遇券</div>
+          <div class="m">截止：明天10:00 · 影响：核销与客诉风险</div>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <a class="btn primary" href="#confirm">去确认</a>
+            <a class="btn" href="#assets">看素材</a>
+          </div>
+        </div>
+        <div class="item">
+          <div class="h">T-003 补货确认｜Air Max 90</div>
+          <div class="m">预计断货48h · 请回填到货计划</div>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <a class="btn primary" href="#feedback">去回填</a>
+            <a class="btn" href="#assets">规则/话术</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 确认参与 -->
+  <section class="page" id="confirm" style="margin-top:12px">
+    <div class="card pad">
+      <b>确认参与｜游客礼遇券</b>
+      <div class="small" style="margin-top:6px">确认参与 + 备货情况（不够就写明）。</div>
+      <div class="grid" style="margin-top:10px">
+        <div><div class="small">参与状态</div>
+          <select class="input" id="join"><option>确认参与</option><option>暂不参与（需说明原因）</option></select>
+        </div>
+        <div><div class="small">备货情况</div>
+          <select class="input"><option>库存充足</option><option>库存偏紧（需补货）</option><option>无货（建议剔除）</option></select>
+        </div>
+        <div><div class="small">备注（可选）</div>
+          <textarea class="input" placeholder="例如：某SKU缺码；明天到货；核销规则需确认…"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn primary" onclick="toast('已提交确认（演示）')">提交</button>
+        <a class="btn" href="#assets">查看素材与话术</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 素材下载 -->
+  <section class="page" id="assets" style="margin-top:12px">
+    <div class="card pad">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <b>素材下载</b><span class="pill">v0.2</span>
+      </div>
+      <div class="small" style="margin-top:6px">统一口径：话术/收银规则/海报（中英）。</div>
+      <div class="grid" style="margin-top:10px">
+        <div class="item"><div class="h">导购话术（中英）</div><div class="m">开场/异议/引导路线</div>
+          <button class="btn primary" style="margin-top:10px" onclick="toast('已标记：已下载（演示）')">下载</button>
+        </div>
+        <div class="item"><div class="h">收银规则说明</div><div class="m">叠加规则举例 + 核销异常SOP</div>
+          <button class="btn primary" style="margin-top:10px" onclick="toast('已标记：已阅读（演示）')">打开</button>
+        </div>
+        <div class="item"><div class="h">海报文案/二维码</div><div class="m">门口/收银台张贴（中英）</div>
+          <button class="btn primary" style="margin-top:10px" onclick="toast('已下载物料（演示）')">下载</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <a class="btn" href="#feedback">去回填</a>
+        <a class="btn primary" href="index.html#tasks" target="_blank">回金鹰后台</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 回填反馈 -->
+  <section class="page" id="feedback" style="margin-top:12px">
+    <div class="card pad">
+      <b>回填反馈</b>
+      <div class="small" style="margin-top:6px">把执行结果回传给金鹰：完成情况 + 阻塞原因。</div>
+      <div class="grid" style="margin-top:10px">
+        <div><div class="small">完成状态</div>
+          <select class="input"><option>已完成</option><option>进行中</option><option>无法完成（需说明）</option></select>
+        </div>
+        <div><div class="small">阻塞原因（如有）</div>
+          <select class="input"><option>无</option><option>缺货/到货延迟</option><option>规则不清</option><option>人员不足</option><option>系统问题</option><option>其他</option></select>
+        </div>
+        <div><div class="small">说明（可选）</div>
+          <textarea class="input" placeholder="例如：到货预计明天；建议先剔除本店；核销规则请明确…"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn primary" onclick="toast('回填已提交（演示）')">提交回填</button>
+        <a class="btn" href="#list">返回任务</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="small" style="margin-top:14px;text-align:center">© 金鹰商户协同（原型）</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+  function toast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
+  function show(p){
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('show'));
+    const el=document.getElementById(p); if(el) el.classList.add('show');
+    document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+    const a=document.querySelector(`.nav a[data-p="${p}"]`); if(a) a.classList.add('active');
+  }
+  function init(){ show((location.hash||'#list').replace('#','')); }
+  window.addEventListener('hashchange',init); init();
+</script>
+</body>
+</html>
