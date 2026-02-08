@@ -68,6 +68,19 @@
     .table td, .table th{
   vertical-align:middle;
 }
+    /* 动作列：让同一行的动作链接水平对齐，不要上下错开 */
+.actions{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;         /* 屏幕窄时允许换行 */
+  line-height:1.2;
+}
+.actions .link{
+  white-space:nowrap;     /* 单个动作不拆字 */
+}
+
 
     .item{padding:10px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.22);margin-bottom:10px}
     .item .t{font-weight:700} .item .m{font-size:12px;color:var(--muted);margin-top:6px}
@@ -149,9 +162,13 @@
                 <td>预计少卖 ¥210,000</td>
                 <td style="color:var(--muted)">爆品缺货 + 活动到期未续</td>
                 <td style="text-align:right">
-                  <span class="link" onclick="jump('draft')">生成活动草案</span> ·
-                  <span class="link" onclick="jump('tasks')">生成协同任务</span>
-                </td>
+  <span class="actions">
+    <span class="link" onclick="jump('draft')">生成活动草案</span>
+    <span style="opacity:.45">·</span>
+    <span class="link" onclick="jump('tasks')">生成协同任务</span>
+  </span>
+</td>
+
               </tr>
               <tr>
                 <td><span class="pillType">缺货风险</span></td>
@@ -452,4 +469,5 @@
 </script>
 </body>
 </html>
+
 
